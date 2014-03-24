@@ -27,3 +27,8 @@
 *.log
 *.lib
 *.sbr
+*.tlog
+*.lastbuildstate
+*.idb
+*.vcxproj.filters
+*.sdf
