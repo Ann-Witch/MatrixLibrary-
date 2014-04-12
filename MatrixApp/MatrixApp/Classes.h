@@ -1,16 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <fstream>
 #include <iomanip>
-#include <string.h>
-#include <sstream>
 
 using namespace std;
 
 const int maxnum = 800; 
-const char nm[14] = "D:\Bufer1.txt";
-const char nm2[14] = "D:\Bufer2.txt";
+const char nm[14] = "D:\Bufer1.dat";
 
 template <class T> class Provider;
 class Error;
@@ -35,14 +31,11 @@ public:
 	T GetElem (int i, int j); //!
 	void SetElem (int i, int j, T a); //!
 	T Norm1(); //!
-	double Det(); //!
 	void InvM();
 	void operator += (SimpleM<T>& M); //!
 	void operator *= (SimpleM<T>& M); //!
 	void operator *= (T a); //!
 	SimpleM<T>& operator = (SimpleM<T>& M);
-	void SwapColumns (int col1, int col2); //!
-	void SwapRows (int row1, int row2); //!
 };
 
 template <class T> class BlockM: public Matrix<T>
@@ -71,9 +64,9 @@ public:
 
 template <class T> class FileP: public Provider<T>
 {
-	char* fin;
-	fstream F1;
-	streampos posin, posout; 
+	char* fname;
+	FILE *fin;
+	long posin, posout; 
 
 public:
 	void Clear ();

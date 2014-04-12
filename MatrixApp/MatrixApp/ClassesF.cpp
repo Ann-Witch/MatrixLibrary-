@@ -83,23 +83,11 @@ template <class T> void SimpleM<T> :: operator += (SimpleM<T>& M)
 		throw Error();
 	}
 
-	SimpleM<T> C;
-	FileP<T> p1;
-	char ch [100];
-	strcpy(ch,nm);
-	p1.SetFileName(ch);
-	p1.Clear();
-	C.MakeMatr(n,m,&p1);
-	for (int i = 0; i<n; i++)
-		for (int j = 0; j<m; j++)
-			C.SetElem(i,j,GetElem(i,j));
-	p->Clear();
-
     //вычисление матрицы C=A+B
 	for (int i=0; i<n; i++)
 		for (int j=0; j<m; j++)
 		{
-			a = C.GetElem(i,j);
+			a = GetElem(i,j);
 			b = M.GetElem(i,j);
 			c = a+b;
 			SetElem(i,j,c);
@@ -111,23 +99,11 @@ template <class T> void SimpleM<T> :: operator *= (T a)
 {
 	T c, b;
 
-	SimpleM<T> C;
-	FileP<T> p1;
-	char ch [100];
-	strcpy(ch,nm);
-	p1.SetFileName(ch);
-	p1.Clear();
-	C.MakeMatr(n,m,&p1);
-	for (int i = 0; i<n; i++)
-		for (int j = 0; j<m; j++)
-			C.SetElem(i,j,GetElem(i,j));
-	p->Clear();
-
 	//вычисление матрицы X=A*k
 	for (int i=0; i<n; i++)
 		for (int j=0; j<m; j++)
 		{
-			b = C.GetElem(i,j);
+			b = GetElem(i,j);
 			c = a*b;
 			SetElem(i,j,c);
 		}
@@ -151,9 +127,7 @@ template <class T> void SimpleM<T> :: operator *= (SimpleM<T>& M)
 	p1.SetFileName(ch);
 	p1.Clear();
 	C.MakeMatr(n,m,&p1);
-	for (int i = 0; i<C.n; i++)
-		for (int j = 0; j<C.m; j++)
-			C.SetElem(i,j,GetElem(i,j));
+	C = *this;
 	p->Clear();
 	m = M.m;
 
@@ -182,7 +156,6 @@ template <class T> SimpleM<T>& SimpleM<T> :: operator = (SimpleM<T>& M)
 		throw Error();
 	}
 
-	p->Clear();
 	for (int i = 0; i<n; i++)
 		for (int j = 0; j<m; j++)
 			SetElem(i,j,M.GetElem(i,j));
@@ -212,154 +185,6 @@ template <class T> T SimpleM<T> :: Norm1()
     return max;
 }
 
-template <class T> void SimpleM<T> :: SwapColumns (int col1, int col2)
-{
-	if ((col1 >= m)||(col2 >= m))
-	{
-		throw Error();
-	}
-
-	SimpleM<T> C;
-	FileP<T> p1;
-	char ch [100];
-	strcpy(ch,nm);
-	p1.SetFileName(ch);
-	p1.Clear();
-	C.MakeMatr(n,m,&p1);
-	for (int i = 0; i<C.n; i++)
-		for (int j = 0; j<C.m; j++)
-			C.SetElem(i,j,GetElem(i,j));
-	p->Clear();
-
-	T a, b;
-
-	for (int i = 0; i<n; i++)
-		for (int j = 0; j<m; j++)
-		{
-			a = C.GetElem(i,col1);
-			b = C.GetElem(i,col2);
-			if (j == col1)
-				SetElem(i,j,b);
-			else
-				if (j == col2)
-					SetElem(i,j,a);
-				else
-					SetElem(i,j,C.GetElem(i,j));
-		}
-}
-
-template <class T> void SimpleM<T> :: SwapRows (int row1, int row2)
-{
-	if ((row1 >= n)||(row2 >= n))
-	{
-		throw Error();
-	}
-
-	SimpleM<T> C;
-	FileP<T> p1;
-	char ch [100];
-	strcpy(ch,nm);
-	p1.SetFileName(ch);
-	p1.Clear();
-	C.MakeMatr(n,m,&p1);
-	for (int i = 0; i<C.n; i++)
-		for (int j = 0; j<C.m; j++)
-			C.SetElem(i,j,GetElem(i,j));
-	p->Clear();
-
-	T a, b;
-
-	for (int i = 0; i<n; i++)
-		for (int j = 0; j<m; j++)
-		{
-			a = C.GetElem(row1,j);
-			b = C.GetElem(row2,j);
-			if (i == row1)
-				SetElem(i,j,b);
-			else
-				if (i == row2)
-					SetElem(i,j,a);
-				else
-					SetElem(i,j,C.GetElem(i,j));
-		}
-}
-
-template <class T> double SimpleM<T> :: Det()
-{
-	if (n != m)
-	{
-		throw Error();
-	}
-
-	SimpleM<double> C;
-	FileP<double> p1;
-	char ch [100];
-	strcpy(ch,nm2);
-	p1.SetFileName(ch);
-	p1.Clear();
-	C.MakeMatr(n,m,&p1);
-	for (int i = 0; i<n; i++)
-		for (int j = 0; j<m; j++)
-			C.SetElem(i,j,(double)GetElem(i,j));
-	
-    double det = 1.0;
-	int sign = +1;
-	for(int i = 0; i < n; ++i) // двигаемся вдоль главной диагонали
-	{
-		//поиск ненулевого элемента (i,i, n,n)-матрицы
-		int x1 = 0, y1 = 0; //"координаты" ненулевого эл-та
-		bool f = false; //успех в поиске ненулевого элемента
-
-		for(int x = i; x < n; ++x)
-			for(int y = i; y < n; ++y)
-				if(!f && C.GetElem(x,y))
-				{
-					x1 = x;
-					y1 = y;
-					f = true;
-				}
-
-		if(!f) //нет ненулевого эл-та
-		{
-			det = 0.0;
-			break;
-		}
-
-		if(x1 != i)
-		{
-			C.SwapColumns(i, x1);
-			sign = -sign;
-		}
-
-		if(y1 != i)
-		{
-			C.SwapRows(i, y1);
-			sign = -sign;
-		}
-
-		//сейчас matr[i][i] != 0 
-		det *= C.GetElem(i,i);
-		for(int x = i+1; x <n; x++)
-		{
-			double a = C.GetElem(x,i);
-			a /= C.GetElem(i,i);
-			C.SetElem(x,i,a);
-		}
-
-		//сейчас matr[i][i] == 1;
-		for (int y = i+1; y < n; ++y)
-			for (int x = i+1; x <n; x++)
-			{
-				double a = C.GetElem(x,y);
-				a -= C.GetElem(x,i)*C.GetElem(i,y);
-				C.SetElem(x,y,a);
-			}	
-	}
-	det *= sign;
-
-	return det;
-}
-
 template <class T> void SimpleM<T> :: InvM()
 {
 	if (n != m)
@@ -370,13 +195,13 @@ template <class T> void SimpleM<T> :: InvM()
 	SimpleM<double> C;
 	FileP<double> p1;
 	char ch [100];
-	strcpy(ch,nm2);
+	strcpy(ch,nm);
 	p1.SetFileName(ch);
 	p1.Clear();
 	C.MakeMatr(n,m,&p1);
 	for (int i = 0; i<n; i++)
 		for (int j = 0; j<m; j++)
-			C.SetElem(i,j,(double)GetElem(i,j));
+			C.SetElem(i,j,GetElem(i,j));
 	p->Clear();
 	for (int i = 0; i<n; i++)
 	{
@@ -423,8 +248,8 @@ template <class T> void SimpleM<T> :: InvM()
 // функции класса FileP
 template <class T> void FileP<T> :: Clear()
 {
-	F1.open(fin,ios::out);
-	F1.close();
+	fin = fopen(fname, "wb");
+	fclose(fin);
 	posin = 0; 
 	posout = 0;
 	na = ma = -1;
@@ -432,8 +257,8 @@ template <class T> void FileP<T> :: Clear()
 }
 template <class T> void FileP<T> :: SetFileName (char* s1)
 {
-	fin = new char [100]; 
-	strcpy(fin, s1);
+	fname = new char [100]; 
+	strcpy(fname, s1);
 	na = ma = -1;
 	posin = posout = 0;
 }
@@ -455,54 +280,63 @@ template <class T> void FileP<T> :: GetMatr ()
 		A[i] = new T [ma];
 	bi+=na;
 	bj = 0;
-	F1.open(fin, ios::in|ios::out);
-	if (streamoff(posin) == -1 && bi >= nmatr)
+	fin = fopen (fname, "rb");
+	if (posin >= nmatr*mmatr*sizeof(T))
 	{
-		F1.clear();
 		posin = 0;
 		bi = 0;
 		bj = 0;
 	}
-	F1.seekg(posin, ios::beg);
+	fseek(fin, posin, SEEK_SET);
 
-	for (int i = 0; i<na && !F1.eof(); i++)
+	for (int i = 0; i<na && !feof(fin); i++)
 	{
-		for (int j = 0; j<ma && !F1.eof(); j++)
+		for (int j = 0; j<ma; j++) 
 		{
-			F1>>A[i][j];
+			fread (A[i]+j,sizeof(T),1,fin);
+			if (A[i][j] <= -842150451)
+			{
+				fseek(fin,sizeof(T),SEEK_CUR);
+			}
 		}
 	}
 
-	posin = F1.tellg();
+	posin = ftell(fin);
 
-	F1.close();
+	fclose(fin);
 }
 
 template <class T> void FileP<T> :: SetMatr ()
 {
-	stringstream ss;
-	F1.open(fin, ios::in|ios::out);
-	F1.seekp(posout, ios::beg); 
+	bool fl = false;
+	fin = fopen(fname, "r+b");
+	fseek(fin, posout, SEEK_SET); 
 
-	for (int i = 0; i<na && !F1.eof(); i++)
+	for (int i = 0; i<na; i++)
 	{
-		for (int j = 0; j<ma && !F1.eof(); j++)
+		for (int j = 0; j<ma; j++)
 		{
 			if (A[i][j] <= -842150451)
 				break;
-			F1 << A[i][j] << " ";
+			fwrite (A[i]+j,sizeof(T),1,fin);
+			posout = ftell(fin);
+			if (posout >= nmatr*mmatr*sizeof(T))
+			{
+				fl = true;
+			    break;
+			}
 		}
+
+		if (fl)
+			break;
 	}
 
-	posout = F1.tellp();
-
-	if (posin.seekpos() == 0 && bi+na>= nmatr)
+	if (fl)
 	{
-		F1.clear();
 		posout = 0;
 	}
 
-	F1.close();
+	fclose(fin);
 }
 
 
