@@ -1,5 +1,12 @@
-#include "Classes.h"
+// MatrixLibrary.cpp: определяет экспортированные функции для приложения DLL.
+//
 
+#include "stdafx.h"
+
+ #pragma warning(disable : 4996)
+
+#define EXPORTABLE_CLASS __declspec(dllexport)
+#include "MatrixLibrary.h"
 
 // функции класса SimpleM
 template <class T> void SimpleM<T> :: MakeMatr (int n1, int m1, Provider<T>* p1)
@@ -685,8 +692,8 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 	int n1, m1, k1, q;
 	stringstream ss;
 	string fn;
-	FileP<double> *p1;
-	SimpleM<double> *y;
+	FileP<T> *p1;
+	SimpleM<T> *y;
 	T a, d, c;
 	m.GetParams(k1, m1, n1);
 	if (n1!=m1)
@@ -695,12 +702,12 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 		q = n1;
 
 	SimpleM<T> C;
-	FileP<double> p;
+	FileP<T> p2;
 	char ch [100];
 	strcpy(ch,nm2);
-	p.SetFileName(ch);
-	p.Clear();
-	C.MakeMatr(q,q,&p);
+	p2.SetFileName(ch);
+	p2.Clear();
+	C.MakeMatr(q,q,&p2);
 
 	m.GetBlock(2,0,C);
 	C.InvM();
@@ -729,13 +736,13 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 			throw Error();
 	}
 
-	SimpleM<double>*U = new SimpleM<double>[k1], *L = new SimpleM<double>[k1-1];
+	SimpleM<T>*U = new SimpleM<T>[k1], *L = new SimpleM<T>[k1-1];
 
 	for (int i = 0; i<k1; i++)
 	{
 		ss<<i;
 		fn = "D:\\u" + ss.str() + ".dat";
-		p1 = new FileP<double>;
+		p1 = new FileP<T>;
 		p1->SetFileName(fn.c_str());
 		p1->Clear();
 		U[i].MakeMatr(q,q,p1);
@@ -749,7 +756,7 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 	{
 		ss<<i;
 		fn = "D:\\l" + ss.str() + ".dat";
-		p1 = new FileP<double>;
+		p1 = new FileP<T>;
 		p1->SetFileName(fn.c_str());
 		p1->Clear();
 		L[i].MakeMatr(q,q,p1);
@@ -771,12 +778,12 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 		U[i]+=C;
 	}
 
-	y = new SimpleM<double> [k1];
+	y = new SimpleM<T> [k1];
 	for (int j = 0; j<k1; j++)
 	{
 		ss<<j;
 		fn = "D:\\yBLU" + ss.str() + ".dat";
-		p1 = new FileP<double>;
+		p1 = new FileP<T>;
 		p1->SetFileName(fn.c_str());
 	    p1->Clear();
 		y[j].MakeMatr(q,1,p1);
@@ -789,8 +796,8 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 
 	for (int i = 1; i<k1; i++)
 	{
-		p.Clear();
-	    C.MakeMatr(q,q,&p);
+		p2.Clear();
+	    C.MakeMatr(q,q,&p2);
 		C = L[i-1];
 		C*=y[i-1];
 		C*=-1;
@@ -803,8 +810,8 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 
 	for (int i = k1-2; i>=0; i--)
 	{
-		p.Clear();
-	    C.MakeMatr(q,q,&p);
+		p2.Clear();
+	    C.MakeMatr(q,q,&p2);
 		m.GetBlock(1,i,C);
 		C*=x[i+1];
 		C*=-1;
@@ -834,6 +841,53 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 
 }
 
+template class Matrix<int>;
+template class Matrix<long int>;
+template class Matrix<long long int>;
+template class Matrix<float>;
+template class Matrix<double>;
+
+template class SimpleM<int>;
+template class SimpleM<long int>;
+template class SimpleM<long long int>;
+template class SimpleM<float>;
+template class SimpleM<double>;
+
+template class BlockM<int>;
+template class BlockM<long int>;
+template class BlockM<long long int>;
+template class BlockM<float>;
+template class BlockM<double>;
+
+template class Provider<int>;
+template class Provider<long int>;
+template class Provider<long long int>;
+template class Provider<float>;
+template class Provider<double>;
+
+template class FileP<int>;
+template class FileP<long int>;
+template class FileP<long long int>;
+template class FileP<float>;
+template class FileP<double>;
+
+template class SimpleMethod<float>;
+template class SimpleMethod<double>;
+
+template class SimpleLU<float>;
+template class SimpleLU<double>;
+
+template class BlockMethod<float>;
+template class BlockMethod<double>;
+
+template class Reduction<float>;
+template class Reduction<double>;
+
+template class BlockLU<float>;
+template class BlockLU<double>;
+
+
+
 
 
 		
@@ -844,6 +898,10 @@ template <class T> void BlockLU<T> :: methodB (BlockM<T>m, SimpleM<T>*b, SimpleM
 
 
 	
+
+
+
+
 
 
 

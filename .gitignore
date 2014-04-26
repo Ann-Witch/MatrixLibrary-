@@ -19,6 +19,8 @@
 *.ncb
 *.suo
 *.tlb
+*.ipch
+*.unsuccessfulbuild
 *.tlh
 *.bak
 *.cache

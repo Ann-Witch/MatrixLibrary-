@@ -13,10 +13,10 @@ const char nm[15] = "D:\\Bufer1.dat";
 const char nm2[15] = "D:\\Bufer2.dat";
 const char nm3[15] = "D:\\Bufer3.dat";
 
-template <class T> class Provider;
-class Error;
+template <class T> class EXPORTABLE_CLASS Provider;
+class EXPORTABLE_CLASS Error;
 
-template <class T> class Matrix
+template <class T> class EXPORTABLE_CLASS Matrix
 {
 protected:
 	int n, m;
@@ -27,24 +27,24 @@ public:
 	virtual void SetElem (int i, int j, T a) = 0;
 };
 
-template <class T> class SimpleM: public Matrix<T>
+template <class T> class EXPORTABLE_CLASS SimpleM: public Matrix<T>
 {
 	Provider<T>* p;
-	void CheckSize (); //!
+	void CheckSize (); 
 	
 public:
-	void MakeMatr (int n1, int m1, Provider<T>* p1); //!
-	T GetElem (int i, int j); //!
-	void SetElem (int i, int j, T a); //!
-	T Norm1(); //!
+	void MakeMatr (int n1, int m1, Provider<T>* p1); 
+	T GetElem (int i, int j); 
+	void SetElem (int i, int j, T a); 
+	T Norm1(); 
 	void InvM();
-	void operator += (SimpleM<T>& M); //!
-	void operator *= (SimpleM<T>& M); //!
-	void operator *= (T a); //!
+	void operator += (SimpleM<T>& M); 
+	void operator *= (SimpleM<T>& M); 
+	void operator *= (T a); 
 	SimpleM<T>& operator = (SimpleM<T>& M);
 };
 
-template <class T> class BlockM: public Matrix<T>
+template <class T> class EXPORTABLE_CLASS BlockM: public Matrix<T>
 {
 	int k;
 	SimpleM<T> *F, *D, *E;
@@ -54,10 +54,10 @@ public:
 	void MakeMatr (int k1, int n1, int m1);
 	void GetParams (int &k1, int &m1, int &n1);
 	void SetBlock (int diag, int ind, SimpleM<T>& M);
-	void GetBlock (int diag, int ind, SimpleM<T>& M);
+    void GetBlock (int diag, int ind, SimpleM<T>& M);
 };
 
-template <class T> class Provider
+template <class T> class EXPORTABLE_CLASS Provider
 {
 public:
 	T** A;
@@ -70,7 +70,7 @@ public:
 
 };
 
-template <class T> class FileP: public Provider<T>
+template <class T> class EXPORTABLE_CLASS FileP: public Provider<T>
 {
 	char* fname;
 	FILE *fin;
@@ -78,44 +78,43 @@ template <class T> class FileP: public Provider<T>
 
 public:
 	void Clear ();
-	void SetFileName (const char* s1); //!
-	void SetSize (int n, int m, int nm, int mm); //!
-	void GetMatr (); //!
-	void SetMatr (); //!
+	void SetFileName (const char* s1); 
+	void SetSize (int n, int m, int nm, int mm); 
+	void GetMatr (); 
+	void SetMatr (); 
 };
 
-class Error
+class EXPORTABLE_CLASS Error
 {
 };
 
-template <class T> class SimpleMethod
+template <class T> class EXPORTABLE_CLASS SimpleMethod
 {
 public:
 	virtual void methodS (SimpleM<T>M, SimpleM<T>b, SimpleM<T>x) = 0;
 };
 
-template <class T> class SimpleLU : public SimpleMethod<T>
+template <class T> class EXPORTABLE_CLASS SimpleLU : public SimpleMethod<T>
 {
 public:
 	void methodS (SimpleM<T>M, SimpleM<T>b, SimpleM<T>x);
 };
 
-template <class T> class BlockMethod
+template <class T> class EXPORTABLE_CLASS BlockMethod
 {
 public:
 	virtual void methodB (BlockM<T>m, SimpleM<T>*b, SimpleM<T>*x, SimpleMethod<T>*met)=0;
 };
 
-template <class T> class Reduction : public BlockMethod<T>
+template <class T> class EXPORTABLE_CLASS Reduction : public BlockMethod<T>
 {
 	void Red (SimpleM<T>*f, SimpleM<T>*d, SimpleM<T>**b, int q, int k);
 public:
 	void methodB (BlockM<T>m, SimpleM<T>*b, SimpleM<T>*x, SimpleMethod<T>*met);
 };
 
-template <class T> class BlockLU : public BlockMethod<T>
+template <class T> class EXPORTABLE_CLASS BlockLU : public BlockMethod<T>
 {
-	//void Red (SimpleM<T>*f, SimpleM<T>*d, SimpleM<T>**b, int q, int k);
 public:
 	void methodB (BlockM<T>m, SimpleM<T>*b, SimpleM<T>*x, SimpleMethod<T>*met);
 };
