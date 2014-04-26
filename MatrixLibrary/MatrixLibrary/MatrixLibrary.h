@@ -41,6 +41,7 @@ public:
 	void operator += (SimpleM<T>& M); 
 	void operator *= (SimpleM<T>& M); 
 	void operator *= (T a); 
+	bool operator == (SimpleM<T> M);
 	SimpleM<T>& operator = (SimpleM<T>& M);
 };
 

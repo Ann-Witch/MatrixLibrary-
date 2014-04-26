@@ -19,6 +19,8 @@
 *.ncb
 *.suo
 *.tlb
+*opensdf
+*.ico
 *.ipch
 *.unsuccessfulbuild
 *.tlh

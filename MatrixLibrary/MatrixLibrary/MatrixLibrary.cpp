@@ -170,6 +170,18 @@ template <class T> SimpleM<T>& SimpleM<T> :: operator = (SimpleM<T>& M)
 	return *this;
 }
 
+template <class T> bool SimpleM<T> :: operator == (SimpleM<T> M)
+{
+	if (M.n!=n || M.m!=m)
+		return false;
+
+	for (int i = 0; i<n; i++)
+		for (int j = 0; j<m; j++)
+			if (GetElem(i,j)!=M.GetElem(i,j))
+				return false;
+	return true;
+}
+
 template <class T> T SimpleM<T> :: Norm1()
 {
     T* summ = new T[m]; //Вектор с суммами строк
@@ -560,7 +572,20 @@ template <class T> void Reduction<T> :: methodB (BlockM<T>m, SimpleM<T>*b, Simpl
 	FileP<T> *p1;
 	stringstream ss;
 	string fn;
-	
+
+	int r;
+	SimpleM<T> C, E;
+	FileP<T> p, p2;
+	char ch [100];
+	strcpy(ch,nm2);
+	p.SetFileName(ch);
+	p.Clear();
+	C.MakeMatr(q,q,&p);
+	strcpy(ch,nm3);
+	p2.SetFileName(ch);
+	p2.Clear();
+	E.MakeMatr(q,q,&p2);
+
 	for (int i = 0; i<k1; i++)
 	{
 		ss<<i;
@@ -587,6 +612,13 @@ template <class T> void Reduction<T> :: methodB (BlockM<T>m, SimpleM<T>*b, Simpl
 	}
 	m.GetBlock(2,0,D[0]);
 
+	C = F[0];
+	C*=D[0];
+	E = D[0];
+	E*=F[0];
+	if (!(C==E))
+		throw Error();
+
 	for (int i = 0; i<k1; i++)
 	{
 		B[i] = new SimpleM<T>[n];
@@ -610,20 +642,6 @@ template <class T> void Reduction<T> :: methodB (BlockM<T>m, SimpleM<T>*b, Simpl
 	int cur = pow (2,k1-1);
 
 	met->methodS(D[k1-1],B[k1-1][cur-1],x[cur-1]);
-
-	int r;
-	SimpleM<T> C, E;
-	FileP<T> p, p2;
-	char ch [100];
-	strcpy(ch,nm2);
-	p.SetFileName(ch);
-	p.Clear();
-	C.MakeMatr(q,q,&p);
-	strcpy(ch,nm3);
-	p2.SetFileName(ch);
-	p2.Clear();
-	E.MakeMatr(q,q,&p2);
-
 
 	for (int i = k1-2; i>=0; i--)
 	{
